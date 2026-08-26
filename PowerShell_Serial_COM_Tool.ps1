@@ -61,12 +61,11 @@ $comboBox.Size=New-Object System.Drawing.Size(110,20)
     }
 
 if ($comboBox.Items.Count -gt 0) {
-    $comboBox.SelectedIndex = 0
+	$comboBox.SelectedIndex = 0
 }
 
 
 function sendCom(){
-	
 	if ($null -ne $script:serialPort) {
 		$script:serialPort.WriteLine($textbox1.Text)
 		$textbox1.Text=""
@@ -82,9 +81,10 @@ function openSerialPort {
     if ($null -ne $script:serialPort) {
         $script:serialPort.Close()
         $script:serialPort.Dispose()
-	$script:serialPort = $null
-	$button1.Text="OPEN"
-	return
+		$script:serialPort = $null
+		$button1.Text="OPEN"
+		Write-Host "COM Port is closed."
+		return
     }
 
     $portName = $comboBox.SelectedItem
@@ -103,12 +103,10 @@ function openSerialPort {
     )
 	
 
-    try {
-	
-		
+    try {		
         $script:serialPort.Open()
 		$button1.Text="CLOSE"
-		
+		Write-Host "[$portName] is opened."
     }
     catch {
         [System.Windows.Forms.MessageBox]::Show(
@@ -116,8 +114,8 @@ function openSerialPort {
         )
 	
         if($null -ne $script:serialPort){
-		$script:serialPort.Dispose()
-	}
+			$script:serialPort.Dispose()
+		}
         $script:serialPort = $null
     }
 }
@@ -126,20 +124,15 @@ $timer = New-Object System.Windows.Forms.Timer
 $timer.Interval = 50
 
 $timer.Add_Tick({
-
     if ($null -ne $script:serialPort -and $script:serialPort.IsOpen) {
-
         if ($script:serialPort.BytesToRead -gt 0) {
-
             $data = $script:serialPort.ReadExisting()
-
             $textBox2.AppendText($data)
         }
     }
 })
 
-$timer.Start()
- 
+$timer.Start() 
 $form.Controls.Add($label1)
 $form.Controls.Add($label2)
 $form.Controls.Add($textbox1)
@@ -148,9 +141,10 @@ $form.Controls.Add($button2)
 $form.Controls.Add($button3)
 $form.Controls.Add($textbox2)
 $form.Controls.Add($comboBox)
- 
-$form.ShowDialog()
 
+Write-Host "App is Opened."
+$form.ShowDialog()
+Write-Host "App is Closed."
 
 
 
